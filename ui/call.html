@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Vocal — Call</title>
+    <style>
+        :root {
+            --bg: #0b0b11;
+            --bg-soft: #10101a;
+            --surface: #16161f;
+            --surface-2: #1c1c28;
+            --border: #262633;
+            --border-light: #33334a;
+            --text: #e8e8f0;
+            --muted: #8a8a9c;
+            --dim: #5c5c70;
+            --accent: #6c5ce7;
+            --accent-bright: #a78bfa;
+            --success: #00d68f;
+            --warning: #ffaa00;
+            --danger: #ff4757;
+            --tech: #00d2ff;
+            --commercial: #ff6b6b;
+            --radius: 14px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.45);
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { height: 100%; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            background-image:
+                radial-gradient(ellipse 80% 50% at 50% -20%, rgba(108,92,231,0.18), transparent 70%),
+                radial-gradient(ellipse 60% 45% at 95% 0%, rgba(0,210,255,0.09), transparent 70%),
+                radial-gradient(ellipse 50% 40% at 0% 100%, rgba(167,139,250,0.07), transparent 70%);
+            background-attachment: fixed;
+            overflow: hidden;
+        }
+        button, input, select { font-family: inherit; }
+        ::-webkit-scrollbar { width: 9px; height: 9px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border-light); border-radius: 99px; }
+        ::-webkit-scrollbar-thumb:hover { background: #454560; }
+
+        /* ── Buttons ──────────────────────────────────────────────── */
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.45rem;
+            padding: 0.65rem 1.15rem; border: 1px solid transparent; border-radius: 10px;
+            font-size: 0.88rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+            transition: transform 0.12s ease, background 0.15s, border-color 0.15s, box-shadow 0.15s;
+            color: var(--text); background: transparent;
+        }
+        .btn:active:not(:disabled) { transform: translateY(1px); }
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent), #8b7bf0);
+            color: #fff; box-shadow: 0 4px 16px rgba(108,92,231,0.35);
+        }
+        .btn-primary:hover:not(:disabled) { background: linear-gradient(135deg, #7d6ded, var(--accent-bright)); }
+        .btn-secondary { background: var(--surface-2); border-color: var(--border); }
+        .btn-secondary:hover:not(:disabled) { border-color: var(--accent); background: rgba(108,92,231,0.12); }
+        .btn-ghost { background: transparent; color: var(--muted); border-color: transparent; }
+        .btn-ghost:hover:not(:disabled) { color: var(--text); background: rgba(255,255,255,0.05); }
+        .btn-danger { background: linear-gradient(135deg, #e8394a, var(--danger)); color: #fff; box-shadow: 0 4px 16px rgba(255,71,87,0.28); }
+        .btn-danger:hover:not(:disabled) { filter: brightness(1.1); }
+        .btn-danger-soft { background: rgba(255,71,87,0.12); color: var(--danger); border-color: rgba(255,71,87,0.3); }
+        .btn-danger-soft:hover:not(:disabled) { background: rgba(255,71,87,0.2); }
+        .btn:disabled { opacity: 0.4; cursor: not-allowed; box-shadow: none; }
+        .btn-lg { padding: 0.85rem 1.6rem; font-size: 0.95rem; border-radius: 12px; }
+
+        /* ── Form fields ──────────────────────────────────────────── */
+        label { display: block; font-size: 0.75rem; font-weight: 600; color: var(--muted); margin: 0 0 0.35rem; letter-spacing: 0.02em; }
+        input, select {
+            width: 100%; padding: 0.65rem 0.8rem; background: var(--bg-soft);
+            border: 1px solid var(--border); border-radius: 10px; color: var(--text);
+            font-size: 0.92rem; outline: none; transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        input:focus, select:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(108,92,231,0.15); }
+        input::placeholder { color: var(--dim); }
+        .field { margin-bottom: 0.9rem; }
+        .field-row { display: flex; gap: 0.5rem; align-items: flex-end; }
+        .field-row .field { flex: 1; margin-bottom: 0; }
+
+        .error-box {
+            display: none; background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.4);
+            color: #ff8a94; padding: 0.75rem 0.9rem; border-radius: 10px;
+            font-size: 0.84rem; line-height: 1.45;
+        }
+        .error-box.show { display: block; }
+
+        /* ══ PRE-JOIN ═════════════════════════════════════════════════ */
+        #prejoin {
+            height: 100%; display: flex; align-items: center; justify-content: center;
+            padding: 2rem 1.5rem; overflow-y: auto;
+        }
+        .prejoin-card {
+            width: 100%; max-width: 880px;
+            background: linear-gradient(160deg, rgba(28,28,40,0.9), rgba(22,22,31,0.92));
+            border: 1px solid var(--border); border-radius: 20px;
+            box-shadow: var(--shadow); overflow: hidden;
+            display: grid; grid-template-columns: 1fr 1fr;
+        }
+        @media (max-width: 760px) { .prejoin-card { grid-template-columns: 1fr; } }
+
+        .prejoin-preview {
+            padding: 2.5rem 2rem; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; gap: 1rem;
+            background:
+                radial-gradient(ellipse 90% 70% at 50% 0%, rgba(108,92,231,0.18), transparent 70%),
+                rgba(11,11,17,0.5);
+            border-right: 1px solid var(--border);
+        }
+        @media (max-width: 760px) { .prejoin-preview { border-right: none; border-bottom: 1px solid var(--border); padding: 2rem; } }
+        .brand { font-size: 0.72rem; font-weight: 800; letter-spacing: 0.18em; text-transform: uppercase; color: var(--dim); }
+        .preview-avatar {
+            width: 120px; height: 120px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 2.4rem; font-weight: 800; color: #0b0b11;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+            transition: background 0.3s;
+        }
+        .preview-name { font-size: 1.15rem; font-weight: 700; }
+        .preview-note { font-size: 0.82rem; color: var(--muted); text-align: center; line-height: 1.55; max-width: 260px; }
+        .preview-note strong { color: var(--accent-bright); font-weight: 600; }
+
+        .prejoin-form { padding: 2.25rem 2rem; }
+        .prejoin-form h1 { font-size: 1.45rem; font-weight: 700; letter-spacing: -0.02em; margin-bottom: 0.3rem; }
+        .prejoin-form h1 span {
+            background: linear-gradient(90deg, var(--accent-bright), var(--tech));
+            -webkit-background-clip: text; background-clip: text; color: transparent;
+        }
+        .prejoin-form .sub { color: var(--muted); font-size: 0.86rem; margin-bottom: 1.5rem; line-height: 1.5; }
+        #joinBtn { width: 100%; margin-top: 1.25rem; }
+
+        /* ══ IN-CALL ══════════════════════════════════════════════════ */
+        #callView { display: none; height: 100%; flex-direction: column; }
+        #callView.show { display: flex; }
+
+        /* Top bar */
+        .topbar {
+            display: flex; align-items: center; gap: 1rem; flex-shrink: 0;
+            padding: 0.85rem 1.25rem; border-bottom: 1px solid var(--border);
+            background: rgba(16,16,26,0.75); backdrop-filter: blur(12px);
+        }
+        .topbar-brand { display: flex; align-items: center; gap: 0.55rem; font-weight: 700; font-size: 0.95rem; }
+        .topbar-brand .logo {
+            width: 30px; height: 30px; border-radius: 9px; flex-shrink: 0;
+            background: linear-gradient(135deg, var(--accent), var(--tech));
+            display: flex; align-items: center; justify-content: center; font-size: 0.95rem;
+        }
+        .session-pill {
+            display: inline-flex; align-items: center; gap: 0.5rem; padding: 0.35rem 0.4rem 0.35rem 0.75rem;
+            background: var(--surface-2); border: 1px solid var(--border); border-radius: 99px;
+            font-size: 0.78rem; color: var(--muted); max-width: 340px;
+        }
+        .session-pill code { font-family: ui-monospace, 'Cascadia Code', monospace; color: var(--text); font-size: 0.76rem; }
+        .session-pill button {
+            border: none; background: transparent; color: var(--muted); cursor: pointer;
+            padding: 0.25rem 0.5rem; border-radius: 99px; font-size: 0.76rem; transition: all 0.15s;
+        }
+        .session-pill button:hover { background: rgba(108,92,231,0.18); color: var(--accent-bright); }
+        .topbar-right { margin-left: auto; display: flex; align-items: center; gap: 0.75rem; }
+
+        .chip {
+            display: inline-flex; align-items: center; gap: 0.45rem; padding: 0.35rem 0.8rem;
+            border-radius: 99px; font-size: 0.78rem; font-weight: 600;
+            background: var(--surface-2); border: 1px solid var(--border); color: var(--muted);
+        }
+        .status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); flex-shrink: 0; }
+        .chip.status-ok { color: var(--success); border-color: rgba(0,214,143,0.3); background: rgba(0,214,143,0.08); }
+        .chip.status-ok .status-dot { background: var(--success); box-shadow: 0 0 8px var(--success); }
+        .chip.status-pending { color: var(--warning); border-color: rgba(255,170,0,0.3); background: rgba(255,170,0,0.08); }
+        .chip.status-pending .status-dot { background: var(--warning); }
+        .chip.status-error { color: var(--danger); border-color: rgba(255,71,87,0.3); background: rgba(255,71,87,0.08); }
+        .chip.status-error .status-dot { background: var(--danger); }
+
+        .rec-indicator {
+            display: none; align-items: center; gap: 0.45rem; padding: 0.35rem 0.8rem;
+            border-radius: 99px; font-size: 0.74rem; font-weight: 800; letter-spacing: 0.08em;
+            color: var(--danger); background: rgba(255,71,87,0.1); border: 1px solid rgba(255,71,87,0.3);
+        }
+        .rec-indicator.show { display: inline-flex; }
+        .rec-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--danger); animation: pulse 1.3s ease-in-out infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+        /* Body: stage + rail */
+        .call-body { flex: 1; display: grid; grid-template-columns: 1fr 400px; min-height: 0; }
+        @media (max-width: 1080px) { .call-body { grid-template-columns: 1fr 340px; } }
+        @media (max-width: 880px) {
+            body { overflow: auto; }
+            #callView.show { height: auto; min-height: 100%; }
+            .call-body { grid-template-columns: 1fr; }
+            .rail { border-left: none !important; border-top: 1px solid var(--border); }
+        }
+
+        /* ── Stage (participants) ─────────────────────────────────── */
+        .stage { padding: 1.5rem; overflow-y: auto; display: flex; flex-direction: column; min-height: 0; }
+        .stage-head {
+            display: flex; align-items: center; gap: 0.6rem; margin-bottom: 1.1rem; flex-shrink: 0;
+        }
+        .stage-head h2 { font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); font-weight: 700; }
+        .count-badge {
+            padding: 0.1rem 0.5rem; border-radius: 99px; font-size: 0.72rem; font-weight: 700;
+            background: rgba(108,92,231,0.15); color: var(--accent-bright);
+        }
+
+        .participants {
+            display: grid; gap: 1rem;
+            grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+            align-content: start;
+        }
+        .participant {
+            position: relative; display: flex; flex-direction: column; align-items: center;
+            gap: 0.7rem; padding: 1.5rem 1rem 1.25rem;
+            background: linear-gradient(160deg, var(--surface-2), var(--surface));
+            border: 1px solid var(--border); border-radius: var(--radius);
+            transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+        }
+        .participant:hover { transform: translateY(-2px); }
+        .participant.is-self { border-color: rgba(108,92,231,0.45); }
+        .participant.is-speaking { border-color: var(--success); box-shadow: 0 0 0 1px var(--success), 0 8px 28px rgba(0,214,143,0.18); }
+
+        .avatar-ring {
+            position: relative; width: 92px; height: 92px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+        }
+        .avatar-ring::before {
+            content: ''; position: absolute; inset: -6px; border-radius: 50%;
+            border: 2px solid transparent; transition: border-color 0.2s;
+        }
+        .participant.is-speaking .avatar-ring::before {
+            border-color: var(--success); animation: ripple 1.4s ease-out infinite;
+        }
+        @keyframes ripple {
+            0% { transform: scale(0.95); opacity: 0.9; }
+            100% { transform: scale(1.12); opacity: 0; }
+        }
+        .participant-avatar {
+            width: 100%; height: 100%; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 800; font-size: 1.75rem; color: #0b0b11; letter-spacing: 0.01em;
+        }
+        .avatar-badge {
+            position: absolute; bottom: 0; right: 0;
+            width: 26px; height: 26px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 0.75rem;
+            background: var(--surface-2); border: 2px solid var(--surface); color: var(--text);
+        }
+        .avatar-badge.muted { background: var(--danger); color: #fff; }
+
+        .participant-name {
+            font-size: 0.95rem; font-weight: 600; text-align: center; max-width: 100%;
+            overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+        }
+        .participant-name .you { color: var(--dim); font-weight: 400; font-size: 0.82rem; }
+        .participant-side {
+            font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;
+            padding: 0.15rem 0.55rem; border-radius: 99px;
+        }
+        .side-left { background: rgba(167,139,250,0.14); color: var(--accent-bright); }
+        .side-right { background: rgba(0,210,255,0.12); color: var(--tech); }
+
+        .participant-empty {
+            grid-column: 1 / -1; text-align: center; padding: 2.5rem 1rem;
+            color: var(--dim); font-size: 0.88rem; line-height: 1.6;
+            border: 1px dashed var(--border); border-radius: var(--radius);
+        }
+
+        .stage-hint {
+            margin-top: auto; padding-top: 1.25rem; font-size: 0.8rem; color: var(--dim); line-height: 1.6;
+        }
+        .stage-hint strong { color: var(--muted); font-weight: 600; }
+
+        /* ── Rail (transcript + PV) ───────────────────────────────── */
+        .rail {
+            border-left: 1px solid var(--border); background: rgba(16,16,26,0.5);
+            overflow-y: auto; padding: 1.25rem; display: flex; flex-direction: column; gap: 1rem;
+            min-height: 0;
+        }
+        /* `flex-shrink: 0` keeps each panel at its natural height so a long final
+           PV makes the rail scroll instead of squeezing panels (which would clip
+           the "Open full PV" button via `.panel { overflow: hidden }`). */
+        .panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); overflow: hidden; flex-shrink: 0; }
+        .panel-head {
+            display: flex; align-items: center; gap: 0.5rem; padding: 0.85rem 1rem;
+            border-bottom: 1px solid var(--border);
+            font-size: 0.76rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.07em; color: var(--muted);
+        }
+        .panel-head .live-tag {
+            margin-left: auto; font-size: 0.62rem; padding: 0.15rem 0.45rem; border-radius: 99px;
+            background: rgba(255,170,0,0.12); color: var(--warning); letter-spacing: 0.05em;
+        }
+        .panel-body { padding: 0.9rem 1rem; }
+
+        #transcriptFeed { max-height: 340px; overflow-y: auto; font-size: 0.87rem; line-height: 1.6; }
+        .transcript-speaker { display: flex; flex-direction: column; gap: 0.2rem; padding: 0.5rem 0; border-bottom: 1px solid rgba(38,38,51,0.7); }
+        .transcript-speaker:last-child { border-bottom: none; }
+        .speaker-tag { font-weight: 700; font-size: 0.76rem; letter-spacing: 0.02em; }
+        .speaker-text { white-space: pre-wrap; color: var(--text); }
+        .deafened-overlay, .transcript-empty {
+            color: var(--dim); text-align: center; padding: 2rem 0.5rem; font-size: 0.84rem; line-height: 1.6;
+        }
+
+        #draftPanel, #resultPanel { display: none; }
+        #draftPanel.show, #resultPanel.show { display: block; }
+
+        /* PV rendering */
+        .pv { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--bg-soft); }
+        .pv-head { padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: flex-start; gap: 0.6rem; }
+        .pv-head h3 { font-size: 0.95rem; font-weight: 600; }
+        .badge { display: inline-flex; align-items: center; padding: 0.18rem 0.55rem; border-radius: 999px; font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.04em; flex-shrink: 0; }
+        .badge-tech { background: rgba(0,210,255,0.12); color: var(--tech); border: 1px solid rgba(0,210,255,0.25); }
+        .badge-commercial { background: rgba(255,107,107,0.12); color: var(--commercial); border: 1px solid rgba(255,107,107,0.25); }
+        .pv-id { padding: 0.5rem 0.9rem 0; font-size: 0.68rem; color: var(--dim); font-family: ui-monospace, monospace; word-break: break-all; }
+        .pv-participants { padding: 0.6rem 0.9rem; font-size: 0.8rem; color: var(--muted); border-bottom: 1px solid rgba(38,38,51,0.7); }
+        .pv-person { color: var(--text); font-weight: 600; }
+        .side { font-size: 0.62rem; text-transform: uppercase; font-weight: 700; }
+        .side-tag-left { color: var(--accent-bright); }
+        .side-tag-right { color: var(--tech); }
+        .pv-cr { padding: 0.8rem 0.9rem; font-size: 0.85rem; line-height: 1.65; white-space: pre-wrap; }
+        .pv-actions { list-style: none; padding: 0.3rem 0.9rem 0.8rem; }
+        .pv-actions li { display: flex; justify-content: space-between; gap: 0.6rem; padding: 0.45rem 0; border-bottom: 1px solid rgba(38,38,51,0.7); font-size: 0.82rem; }
+        .pv-actions li:last-child { border-bottom: none; }
+        .action-meta { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; text-align: right; }
+        .meeting { margin: 0 0.9rem 0.9rem; padding: 0.55rem 0.75rem; border-radius: 8px; font-size: 0.78rem; }
+        .meeting.yes { background: rgba(0,214,143,0.08); border: 1px solid rgba(0,214,143,0.22); color: var(--success); }
+        .meeting.no { background: var(--surface-2); border: 1px solid var(--border); color: var(--muted); }
+        .routing { margin-top: 0.75rem; padding: 0.65rem 0.85rem; border-radius: 8px; background: rgba(108,92,231,0.1); border: 1px solid rgba(108,92,231,0.25); font-size: 0.8rem; line-height: 1.5; }
+        .full-pv-row { margin-top: 0.9rem; }
+        .full-pv-row a { text-decoration: none; width: 100%; }
+
+        /* ── Control dock ─────────────────────────────────────────── */
+        .dock {
+            flex-shrink: 0; display: flex; align-items: center; gap: 0.6rem;
+            padding: 0.9rem 1.25rem; border-top: 1px solid var(--border);
+            background: rgba(16,16,26,0.85); backdrop-filter: blur(12px); flex-wrap: wrap;
+        }
+        .dock-group { display: flex; align-items: center; gap: 0.6rem; }
+        .dock-group.right { margin-left: auto; }
+        .dock-divider { width: 1px; height: 26px; background: var(--border); margin: 0 0.25rem; }
+        .btn-round {
+            width: 46px; height: 46px; padding: 0; border-radius: 50%; font-size: 1.1rem;
+            background: var(--surface-2); border: 1px solid var(--border);
+        }
+        .btn-round:hover:not(:disabled) { border-color: var(--accent); background: rgba(108,92,231,0.12); }
+        .btn-round.active { background: rgba(255,71,87,0.15); border-color: rgba(255,71,87,0.4); color: var(--danger); }
+        @media (max-width: 880px) { .dock { position: sticky; bottom: 0; z-index: 10; } }
+    </style>
+</head>
+<body>
+
+<!-- ══ PRE-JOIN ═══════════════════════════════════════════════════ -->
+<div id="prejoin">
+    <div class="prejoin-card">
+        <div class="prejoin-preview">
+            <div class="brand">CRM Vocal</div>
+            <div class="preview-avatar" id="previewAvatar">A</div>
+            <div class="preview-name" id="previewName">Agent</div>
+            <p class="preview-note">
+                Joining turns your <strong>mic on</strong> and connects you to everyone
+                already in the call. Nothing is transcribed until someone starts the agent.
+            </p>
+        </div>
+
+        <div class="prejoin-form">
+            <h1>Ready to <span>join?</span></h1>
+            <p class="sub">Set your name and side, then join the call.</p>
+
+            <div class="field">
+                <label for="speakerId">Your name</label>
+                <input type="text" id="speakerId" placeholder="e.g. Sami" value="Agent" autocomplete="off">
+            </div>
+
+            <div class="field">
+                <label for="side">Your side</label>
+                <select id="side">
+                    <option value="left" selected>Left — Ora Telecom</option>
+                    <option value="right">Right — External</option>
+                </select>
+            </div>
+
+            <div class="field-row">
+                <div class="field">
+                    <label for="sessionId">Session ID</label>
+                    <input type="text" id="sessionId" placeholder="Paste or generate…" autocomplete="off">
+                </div>
+                <button class="btn btn-secondary" id="generateBtn" title="Generate a new session id">🔄</button>
+            </div>
+
+            <div class="error-box" id="prejoinError"></div>
+
+            <button class="btn btn-primary btn-lg" id="joinBtn">🎙 Join call</button>
+        </div>
+    </div>
+</div>
+
+<!-- ══ IN-CALL ════════════════════════════════════════════════════ -->
+<div id="callView">
+    <header class="topbar">
+        <div class="topbar-brand">
+            <span class="logo">🎙</span>
+            <span>CRM Vocal</span>
+        </div>
+        <div class="session-pill">
+            <code id="sessionLabel">—</code>
+            <button id="copyInviteBtn" title="Copy the invite link">🔗 Invite</button>
+        </div>
+        <div class="topbar-right">
+            <span class="rec-indicator" id="recIndicator"><span class="rec-dot"></span> REC</span>
+            <span class="chip status-pending" id="statusChip">
+                <span class="status-dot"></span><span id="statusText">connecting…</span>
+            </span>
+        </div>
+    </header>
+
+    <div class="call-body">
+        <!-- Stage -->
+        <section class="stage">
+            <div class="stage-head">
+                <h2>In this call</h2>
+                <span class="count-badge" id="countBadge">0</span>
+            </div>
+
+            <div class="participants" id="participantsRow">
+                <div class="participant-empty" id="participantsEmpty">
+                    Connecting you to the call…
+                </div>
+            </div>
+
+            <div class="error-box" id="errorBox" style="margin-top:1.25rem;"></div>
+
+            <p class="stage-hint">
+                🤖 <strong>Start Agent</strong> is session-wide — one press transcribes
+                every member for the whole call. <strong>Leave call</strong> disconnects you only;
+                <strong>End for all</strong> closes the call and generates the final PV.
+            </p>
+        </section>
+
+        <!-- Rail -->
+        <aside class="rail">
+            <div class="panel">
+                <div class="panel-head">📝 Live transcript</div>
+                <div class="panel-body">
+                    <div class="transcript-empty" id="transcriptEmpty">
+                        Waiting for the agent to start listening.
+                    </div>
+                    <div id="transcriptFeed"></div>
+                </div>
+            </div>
+
+            <div class="panel" id="draftPanel">
+                <div class="panel-head">⚡ PV draft <span class="live-tag">live</span></div>
+                <div class="panel-body" id="draftBody"></div>
+            </div>
+
+            <div class="panel" id="resultPanel">
+                <div class="panel-head">✅ Final PV + routing</div>
+                <div class="panel-body" id="resultBody"></div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Control dock -->
+    <footer class="dock">
+        <div class="dock-group">
+            <button class="btn btn-round" id="muteBtn" title="Mute your mic">🎤</button>
+            <button class="btn btn-round" id="deafenBtn" title="Stop hearing the call">🙉</button>
+            <div class="dock-divider"></div>
+            <button class="btn btn-secondary" id="agentBtn">🤖 Start Agent</button>
+        </div>
+        <div class="dock-group right">
+            <button class="btn btn-ghost" id="endBtn" title="End the call for everyone and generate the PV">⋯ End for all</button>
+            <button class="btn btn-danger" id="leaveBtn">📵 Leave call</button>
+        </div>
+    </footer>
+</div>
+
+<script src="call.js?v=2026-08-22"></script>
+</body>
+</html>

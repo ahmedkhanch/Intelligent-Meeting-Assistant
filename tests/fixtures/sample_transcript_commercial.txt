@@ -1,0 +1,22 @@
+[14:05:00] APPEL DÉMARRÉ
+[14:05:03] Ahmed : Bonjour Mehdi, merci de prendre le temps. Comment ça va depuis la dernière fois ?
+[14:05:06] Mehdi Trabelsi : Bonjour Ahmed, ça va super. J'ai bien reçu votre proposition, on l'a étudiée en interne cette semaine.
+[14:05:10] Ahmed : Excellent, justement c'est pour ça que je vous appelle. Quel est votre retour sur le partenariat Q3 ?
+[14:05:14] Mehdi Trabelsi : Écoutez, on est très intéressés. Le pricing est compétitif, et votre approche modulaire correspond bien à ce qu'on cherche pour Relyance Agency.
+[14:05:20] Ahmed : Content de l'entendre. L'idée c'est qu'on commence avec le module CRM de base en juillet, puis le module analytics en septembre.
+[14:05:25] Mehdi Trabelsi : Oui, par contre sur le planning, on préférerait un déploiement par phases. Pas tout d'un coup. Vous pourriez faire une timeline avec des jalons clairs ?
+[14:05:30] Ahmed : Carrément, je vous fais une proposition révisée avec un phased delivery. Je peux vous envoyer ça d'ici le 20 juin.
+[14:05:34] Mehdi Trabelsi : Parfait. Et il faudrait aussi qu'on voit la partie data handling. Nos équipes legal et IT sont pointilleuses là-dessus.
+[14:05:38] Ahmed : Oui, c'est normal. On a toute la doc sur la conformité RGPD et la sécurité des données. Je demande à kh de préparer une documentation spécifique pour vos équipes.
+[14:05:42] Mehdi Trabelsi : kh c'est votre CTO c'est ça ?
+[14:05:44] Ahmed : Oui, kh gère toute la partie technique chez Ora Telecom. Il pourra répondre aux questions de votre IT.
+[14:05:48] Mehdi Trabelsi : Super. Et sur l'aspect contractuel, on aimerait avoir une clause de réversibilité. C'est obligatoire pour nous.
+[14:05:52] Ahmed : Aucun souci, on inclut la clause dans la proposition. Vous voulez qu'on cale une réunion avec les équipes techniques ?
+[14:05:56] Mehdi Trabelsi : Oui, excellente idée. La semaine du 23 juin ça vous irait ?
+[14:06:00] Ahmed : On peut faire le 23 juin à 14h. J'invite kh et votre IT.
+[14:06:03] Mehdi Trabelsi : C'est bon pour moi. Je réserve le créneau.
+[14:06:06] Ahmed : Parfait. Donc pour récapituler l'appel : je vous envoie la proposition révisée avec le planning par phases pour le 20 juin, kh prépare la documentation data handling pour le 21 juin, et on se retrouve le 23 juin à 14h pour la réunion technique.
+[14:06:14] Mehdi Trabelsi : Impeccable. Merci Ahmed, c'est un plaisir de travailler avec Ora Telecom.
+[14:06:16] Ahmed : Tout le plaisir est pour nous. Bonne journée Mehdi, à bientôt !
+[14:06:18] Mehdi Trabelsi : À bientôt, au revoir.
+[14:06:20] APPEL TERMINÉ

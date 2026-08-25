@@ -1,0 +1,25 @@
+[17:30:12] APPEL DÉMARRÉ
+[17:30:15] kh : Salam Oussema, ça va ? T'es dispo pour faire le point sur l'infra Ora CRM ?
+[17:30:18] Oussema : Salam kh, ouais bien sûr. J'ai regardé ton message sur Slack, on va faire le point.
+[17:30:22] kh : Super. Donc on a besoin de monter deux environnements : un dev et un prod. L'environnement dev c'est pour que l'équipe puisse tester l'API CRM Vocal, et le prod évidemment pour la mise en ligne.
+[17:30:30] Oussema : Ok, je peux créer les deux sur GitLab. Pour le dev, je peux le faire d'ici vendredi. Pour le prod, il faut qu'on voit avec l'encadrant pour les credentials AWS.
+[17:30:35] kh : Oui, le dev est prioritaire. Pour le prod on verra après. Tu penses que c'est faisable facilement ou c'est complexe ?
+[17:30:40] Oussema : Franchement le dev c'est facile, je clone notre template GitLab CI et je configure les variables. Pour le prod par contre c'est plus chaud, il y a toute la partie sécurité, VPC, IAM roles à mettre en place.
+[17:30:45] kh : Donc facile pour le dev, difficile pour le prod. Noté. Ensuite — l'API contract. On s'était mis d'accord sur le payload POST /api/crm/tasks ?
+[17:30:50] Oussema : Oui, je veux bien qu'on refasse le point. Tu m'envoies la structure JSON ?
+[17:30:52] kh : Bien sûr. C'est un POST avec pv_id, call_date, subject, participants, et une liste de tasks. Chaque task a un title, un owner, une deadline, et une difficulty.
+[17:30:58] Oussema : Ok, et pour l'auth ? API key dans le header ou JWT ?
+[17:31:02] kh : Bonne question. Il faut qu'on décide ça rapidement. Moi je penche pour API key pour la simplicité, mais JWT c'est plus standard pour du service-to-service.
+[17:31:08] Oussema : Je préfère JWT aussi. C'est plus secure et ça permet de gérer l'expiration. Mais c'est un peu plus de boulot à implémenter.
+[17:31:12] kh : Tu peux me faire une recommandation écrite ? Genre un petit doc avec les deux options et pourquoi JWT ?
+[17:31:15] Oussema : Carrément, je te fais ça pour demain.
+[17:31:18] kh : Parfait. Dernier point — l'implémentation du endpoint POST /api/crm/tasks. Tu penses pouvoir le faire pour quand ?
+[17:31:22] Oussema : Si je commence après le dev environment, je peux livrer pour le 25 juin. Mais c'est un boulot conséquent, il faut gérer la validation du payload, l'erreur handling, les tests...
+[17:31:28] kh : Carrément, c'est difficile comme tâche. Tu veux que je t'envoie les specs complètes par écrit ?
+[17:31:30] Oussema : Oui stp, comme ça j'ai tout sous la main. Et pour la réunion de suivi, on se refait un point la semaine prochaine ?
+[17:31:35] kh : Excellente idée. Je propose mercredi 25 juin à 10h, ça te va ?
+[17:31:38] Oussema : Parfait, c'est dans mon calendrier. Mercredi 25 à 10h.
+[17:31:40] kh : Top. Donc pour résumer : toi tu t'occupes de l'environnement dev sur GitLab pour vendredi, tu me fais la reco auth pour demain, et tu implémentes le endpoint pour le 25. Moi je t'envoie les specs et le payload JSON aujourd'hui. On se revoit mercredi 25 à 10h.
+[17:31:45] Oussema : Nickel, c'est clair. À mercredi !
+[17:31:47] kh : À mercredi, salam !
+[17:31:50] APPEL TERMINÉ

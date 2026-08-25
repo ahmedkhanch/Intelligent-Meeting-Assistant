@@ -1,0 +1,41 @@
+# Environment
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Docker
+data/
+
+# Logs
+*.log
+logs/
+
+# Local tooling (not part of the project)
+.claude/
+.pytest_cache/
+
+# Extra test audio — kept locally only, regenerate with scripts/generate_meeting_audio.py.
+# Only tech_meeting_test.wav and commercial_meeting_test.wav are committed.
+/final_test_sample.mp3
+/final_test_sample.wav
+/tech_meeting_test.mp3
+/commercial_meeting_test.mp3

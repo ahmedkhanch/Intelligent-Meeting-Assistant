@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Vocal — Test UI (Phase 1)</title>
+    <style>
+        :root {
+            --bg: #0f0f14;
+            --surface: #1a1a24;
+            --border: #2a2a3a;
+            --text: #e0e0e8;
+            --muted: #7a7a8a;
+            --accent: #6c5ce7;
+            --accent-bright: #a78bfa;
+            --success: #00d68f;
+            --warning: #ffaa00;
+            --danger: #ff4757;
+            --tech: #00d2ff;
+            --commercial: #ff6b6b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+        .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1.5rem; }
+
+        header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        header h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--accent-bright);
+            letter-spacing: -0.02em;
+        }
+        header p { color: var(--muted); margin-top: 0.3rem; font-size: 0.9rem; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin-bottom: 1.5rem; }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+        }
+        .card h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+        .card label {
+            display: block;
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 0.25rem;
+            margin-top: 0.6rem;
+        }
+        .card input {
+            width: 100%;
+            padding: 0.55rem 0.7rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-size: 0.9rem;
+            font-family: inherit;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .card input:focus { border-color: var(--accent); }
+
+        .card.full-width { grid-column: 1 / -1; }
+        textarea {
+            width: 100%;
+            min-height: 200px;
+            padding: 0.75rem;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            color: var(--text);
+            font-family: 'Consolas', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            resize: vertical;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        textarea:focus { border-color: var(--accent); }
+
+        .actions {
+            display: flex; gap: 0.75rem; margin: 1.5rem 0;
+            align-items: center;
+        }
+        button {
+            padding: 0.65rem 1.5rem;
+            border: none;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+        .btn-primary:hover { background: var(--accent-bright); transform: translateY(-1px); }
+        .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        .btn-secondary {
+            background: transparent;
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn-secondary:hover { border-color: var(--accent); background: rgba(108,92,231,0.08); }
+
+        .badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .badge-tech { background: rgba(0,210,255,0.12); color: var(--tech); }
+        .badge-commercial { background: rgba(255,107,107,0.12); color: var(--commercial); }
+
+        .result { display: none; }
+        .result.show { display: block; }
+
+        .pv-display {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        .pv-header {
+            padding: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+        .pv-header h2 { font-size: 1.2rem; }
+        .pv-body { padding: 1.25rem; }
+        .pv-compte-rendu {
+            background: var(--bg);
+            padding: 1rem;
+            border-radius: 6px;
+            line-height: 1.7;
+            margin: 1rem 0;
+            white-space: pre-wrap;
+        }
+        .pv-actions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+        .pv-actions-table th {
+            text-align: left;
+            font-size: 0.75rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .pv-actions-table td {
+            padding: 0.6rem 0.75rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(42,42,58,0.5);
+        }
+        .difficulty-facile { color: var(--success); }
+        .difficulty-difficile { color: var(--warning); }
+        .difficulty-très-difficile { color: var(--danger); }
+
+        .routing-info {
+            margin-top: 1rem;
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            font-size: 0.85rem;
+        }
+        .routing-hubspot { background: rgba(255,107,107,0.08); border: 1px solid rgba(255,107,107,0.2); }
+        .routing-ora { background: rgba(0,210,255,0.08); border: 1px solid rgba(0,210,255,0.2); }
+
+        .error-box {
+            background: rgba(255,71,87,0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+        .loading.show { display: block; }
+        .spinner {
+            width: 32px; height: 32px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 0.75rem;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        .status-dot {
+            display: inline-block;
+            width: 8px; height: 8px;
+            border-radius: 50%;
+            margin-right: 0.4rem;
+        }
+        .status-ok { background: var(--success); }
+        .status-pending { background: var(--warning); }
+        .status-error { background: var(--danger); }
+
+        .steps { margin: 1.5rem 0; }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.5rem 0;
+            font-size: 0.85rem;
+            color: var(--muted);
+        }
+        .step.done { color: var(--success); }
+        .step.active { color: var(--accent-bright); }
+        .step .step-num {
+            width: 24px; height: 24px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.7rem;
+            font-weight: 700;
+        }
+        .step.done .step-num { border-color: var(--success); background: var(--success); color: white; }
+        .step.active .step-num { border-color: var(--accent); background: var(--accent); color: white; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <header>
+        <h1>CRM Vocal — Test Console</h1>
+        <p>Phase 1 • Feed a mock transcript and see the AI pipeline in action</p>
+    </header>
+
+    <!-- Input Form -->
+    <div class="grid">
+        <div class="card">
+            <h3>👤 Participant Left (Ora side)</h3>
+            <label>Name</label>
+            <input type="text" id="leftName" placeholder="e.g. kh" value="kh">
+            <label>Phone number</label>
+            <input type="text" id="leftPhone" placeholder="+216 55 987 654" value="+216 55 987 654">
+            <label>Role</label>
+            <input type="text" id="leftRole" placeholder="Ora Telecom — Dev" value="Ora Telecom — Dev">
+        </div>
+        <div class="card">
+            <h3>👤 Participant Right (external)</h3>
+            <label>Name</label>
+            <input type="text" id="rightName" placeholder="e.g. Oussema" value="Oussema">
+            <label>Phone number</label>
+            <input type="text" id="rightPhone" placeholder="+216 55 000 111" value="+216 55 000 111">
+            <label>Role</label>
+            <input type="text" id="rightRole" placeholder="Ora Studio — Infra" value="Ora Studio — Infra">
+        </div>
+    </div>
+
+    <div class="card full-width">
+        <h3>📝 Transcript</h3>
+        <textarea id="transcript" placeholder="Paste a raw call transcript here...">[17:30:12] APPEL DÉMARRÉ
+[17:30:15] kh : Salam Oussema, ça va ? T'es dispo pour faire le point sur l'infra Ora CRM ?
+[17:30:18] Oussema : Salam kh, ouais bien sûr. J'ai regardé ton message sur Slack, on va faire le point.
+[17:30:22] kh : Super. Donc on a besoin de monter deux environnements : un dev et un prod. L'environnement dev c'est pour que l'équipe puisse tester l'API CRM Vocal, et le prod évidemment pour la mise en ligne.
+[17:30:30] Oussema : Ok, je peux créer les deux sur GitLab. Pour le dev, je peux le faire d'ici vendredi. Pour le prod, il faut qu'on voit avec l'encadrant pour les credentials AWS.
+[17:30:35] kh : Oui, le dev est prioritaire. Pour le prod on verra après. Tu penses que c'est faisable facilement ou c'est complexe ?
+[17:30:40] Oussema : Franchement le dev c'est facile, je clone notre template GitLab CI et je configure les variables. Pour le prod par contre c'est plus chaud, il y a toute la partie sécurité, VPC, IAM roles à mettre en place.
+[17:30:45] kh : Donc facile pour le dev, difficile pour le prod. Noté. Ensuite — l'API contract. On s'était mis d'accord sur le payload POST /api/crm/tasks ?
+[17:30:50] Oussema : Oui, je veux bien qu'on refasse le point. Tu m'envoies la structure JSON ?
+[17:30:52] kh : Bien sûr. C'est un POST avec pv_id, call_date, subject, participants, et une liste de tasks. Chaque task a un title, un owner, une deadline, et une difficulty.
+[17:30:58] Oussema : Ok, et pour l'auth ? API key dans le header ou JWT ?
+[17:31:02] kh : Bonne question. Il faut qu'on décide ça rapidement. Moi je penche pour API key pour la simplicité, mais JWT c'est plus standard pour du service-to-service.
+[17:31:08] Oussema : Je préfère JWT aussi. C'est plus secure et ça permet de gérer l'expiration. Mais c'est un peu plus de boulot à implémenter.
+[17:31:12] kh : Tu peux me faire une recommandation écrite ? Genre un petit doc avec les deux options et pourquoi JWT ?
+[17:31:15] Oussema : Carrément, je te fais ça pour demain.
+[17:31:18] kh : Parfait. Dernier point — l'implémentation du endpoint POST /api/crm/tasks. Tu penses pouvoir le faire pour quand ?
+[17:31:22] Oussema : Si je commence après le dev environment, je peux livrer pour le 25 juin. Mais c'est un boulot conséquent, il faut gérer la validation du payload, l'erreur handling, les tests...
+[17:31:28] kh : Carrément, c'est difficile comme tâche. Tu veux que je t'envoie les specs complètes par écrit ?
+[17:31:30] Oussema : Oui stp, comme ça j'ai tout sous la main. Et pour la réunion de suivi, on se refait un point la semaine prochaine ?
+[17:31:35] kh : Excellente idée. Je propose mercredi 25 juin à 10h, ça te va ?
+[17:31:38] Oussema : Parfait, c'est dans mon calendrier. Mercredi 25 à 10h.
+[17:31:40] kh : Top. Donc pour résumer : toi tu t'occupes de l'environnement dev sur GitLab pour vendredi, tu me fais la reco auth pour demain, et tu implémentes le endpoint pour le 25. Moi je t'envoie les specs et le payload JSON aujourd'hui. On se revoit mercredi 25 à 10h.
+[17:31:45] Oussema : Nickel, c'est clair. À mercredi !
+[17:31:47] kh : À mercredi, salam !
+[17:31:50] APPEL TERMINÉ</textarea>
+    </div>
+
+    <div class="actions">
+        <button class="btn-primary" id="btnProcess" onclick="processTranscript()">
+            ⚡ Process Transcript
+        </button>
+        <button class="btn-secondary" onclick="loadSample('tech')">📋 Load Tech Sample</button>
+        <button class="btn-secondary" onclick="loadSample('commercial')">📋 Load Commercial Sample</button>
+        <span id="apiStatus" style="font-size:0.8rem;color:var(--muted);margin-left:auto;"></span>
+    </div>
+
+    <!-- Steps indicator -->
+    <div class="steps" id="stepsContainer" style="display:none;">
+        <div class="step" id="step1"><span class="step-num">1</span> Summarizer → DeepSeek</div>
+        <div class="step" id="step2"><span class="step-num">2</span> Classifier → auto-detect</div>
+        <div class="step" id="step3"><span class="step-num">3</span> Action Extractor</div>
+        <div class="step" id="step4"><span class="step-num">4</span> Router → HubSpot / Ora Studio</div>
+    </div>
+
+    <!-- Loading -->
+    <div class="loading" id="loading">
+        <div class="spinner"></div>
+        <p>Processing transcript via DeepSeek...</p>
+    </div>
+
+    <!-- Error -->
+    <div class="error-box" id="errorBox" style="display:none;"></div>
+
+    <!-- Result -->
+    <div class="result" id="result">
+        <div class="pv-display">
+            <div class="pv-header">
+                <div>
+                    <h2 id="pvSubject">—</h2>
+                    <p style="color:var(--muted);font-size:0.85rem;margin-top:0.3rem;">
+                        📅 <span id="pvDate">—</span> &nbsp;·&nbsp;
+                        🆔 <span id="pvId">—</span>
+                    </p>
+                </div>
+                <span class="badge" id="pvBadge">—</span>
+            </div>
+            <div class="pv-body">
+                <p style="color:var(--muted);font-size:0.8rem;">👤 Left: <strong id="pvLeft">—</strong></p>
+                <p style="color:var(--muted);font-size:0.8rem;">👤 Right: <strong id="pvRight">—</strong></p>
+                <p style="color:var(--muted);font-size:0.8rem;margin-top:0.25rem;display:none;" id="pvExtrasRow">👥 Others: <strong id="pvExtras">—</strong></p>
+
+                <h4 style="margin-top:1.25rem;font-size:0.8rem;text-transform:uppercase;color:var(--muted);">Compte Rendu</h4>
+                <div class="pv-compte-rendu" id="pvCR">—</div>
+
+                <h4 style="margin-top:1.25rem;font-size:0.8rem;text-transform:uppercase;color:var(--muted);">Actions / Todos</h4>
+                <table class="pv-actions-table">
+                    <thead>
+                        <tr>
+                            <th>Task</th>
+                            <th>Owner</th>
+                            <th>Deadline</th>
+                            <th>Difficulty</th>
+                            <th>Model</th>
+                        </tr>
+                    </thead>
+                    <tbody id="pvActions"></tbody>
+                </table>
+
+                <div id="pvMeeting" style="margin-top:1rem;"></div>
+                <div class="routing-info" id="routingInfo"></div>
+            </div>
+        </div>
+
+        <details style="margin-top:1rem;">
+            <summary style="color:var(--muted);cursor:pointer;font-size:0.85rem;">📄 Raw JSON Response</summary>
+            <pre id="rawJson" style="background:var(--surface);padding:1rem;border-radius:6px;overflow-x:auto;font-size:0.8rem;margin-top:0.5rem;max-height:400px;overflow-y:auto;"></pre>
+        </details>
+    </div>
+</div>
+
+<script>
+const SAMPLES = {
+    tech: `[17:30:12] APPEL DÉMARRÉ
+[17:30:15] kh : Salam Oussema, ça va ? T'es dispo pour faire le point sur l'infra Ora CRM ?
+[17:30:18] Oussema : Salam kh, ouais bien sûr. J'ai regardé ton message sur Slack, on va faire le point.
+[17:30:22] kh : Super. Donc on a besoin de monter deux environnements : un dev et un prod. L'environnement dev c'est pour que l'équipe puisse tester l'API CRM Vocal, et le prod évidemment pour la mise en ligne.
+[17:30:30] Oussema : Ok, je peux créer les deux sur GitLab. Pour le dev, je peux le faire d'ici vendredi. Pour le prod, il faut qu'on voit avec l'encadrant pour les credentials AWS.
+[17:30:35] kh : Oui, le dev est prioritaire. Pour le prod on verra après. Tu penses que c'est faisable facilement ou c'est complexe ?
+[17:30:40] Oussema : Franchement le dev c'est facile, je clone notre template GitLab CI et je configure les variables. Pour le prod par contre c'est plus chaud, il y a toute la partie sécurité, VPC, IAM roles à mettre en place.
+[17:30:45] kh : Donc facile pour le dev, difficile pour le prod. Noté. Ensuite — l'API contract. On s'était mis d'accord sur le payload POST /api/crm/tasks ?
+[17:30:50] Oussema : Oui, je veux bien qu'on refasse le point. Tu m'envoies la structure JSON ?
+[17:30:52] kh : Bien sûr. C'est un POST avec pv_id, call_date, subject, participants, et une liste de tasks. Chaque task a un title, un owner, une deadline, et une difficulty.
+[17:30:58] Oussema : Ok, et pour l'auth ? API key dans le header ou JWT ?
+[17:31:02] kh : Bonne question. Il faut qu'on décide ça rapidement. Moi je penche pour API key pour la simplicité, mais JWT c'est plus standard pour du service-to-service.
+[17:31:08] Oussema : Je préfère JWT aussi. C'est plus secure et ça permet de gérer l'expiration. Mais c'est un peu plus de boulot à implémenter.
+[17:31:12] kh : Tu peux me faire une recommandation écrite ? Genre un petit doc avec les deux options et pourquoi JWT ?
+[17:31:15] Oussema : Carrément, je te fais ça pour demain.
+[17:31:18] kh : Parfait. Dernier point — l'implémentation du endpoint POST /api/crm/tasks. Tu penses pouvoir le faire pour quand ?
+[17:31:22] Oussema : Si je commence après le dev environment, je peux livrer pour le 25 juin. Mais c'est un boulot conséquent, il faut gérer la validation du payload, l'erreur handling, les tests...
+[17:31:28] kh : Carrément, c'est difficile comme tâche. Tu veux que je t'envoie les specs complètes par écrit ?
+[17:31:30] Oussema : Oui stp, comme ça j'ai tout sous la main. Et pour la réunion de suivi, on se refait un point la semaine prochaine ?
+[17:31:35] kh : Excellente idée. Je propose mercredi 25 juin à 10h, ça te va ?
+[17:31:38] Oussema : Parfait, c'est dans mon calendrier. Mercredi 25 à 10h.
+[17:31:40] kh : Top. Donc pour résumer : toi tu t'occupes de l'environnement dev sur GitLab pour vendredi, tu me fais la reco auth pour demain, et tu implémentes le endpoint pour le 25. Moi je t'envoie les specs et le payload JSON aujourd'hui. On se revoit mercredi 25 à 10h.
+[17:31:45] Oussema : Nickel, c'est clair. À mercredi !
+[17:31:47] kh : À mercredi, salam !
+[17:31:50] APPEL TERMINÉ`,
+
+    commercial: `[14:05:00] APPEL DÉMARRÉ
+[14:05:03] Ahmed : Bonjour Mehdi, merci de prendre le temps. Comment ça va depuis la dernière fois ?
+[14:05:06] Mehdi Trabelsi : Bonjour Ahmed, ça va super. J'ai bien reçu votre proposition, on l'a étudiée en interne cette semaine.
+[14:05:10] Ahmed : Excellent, justement c'est pour ça que je vous appelle. Quel est votre retour sur le partenariat Q3 ?
+[14:05:14] Mehdi Trabelsi : Écoutez, on est très intéressés. Le pricing est compétitif, et votre approche modulaire correspond bien à ce qu'on cherche pour Relyance Agency.
+[14:05:20] Ahmed : Content de l'entendre. L'idée c'est qu'on commence avec le module CRM de base en juillet, puis le module analytics en septembre.
+[14:05:25] Mehdi Trabelsi : Oui, par contre sur le planning, on préférerait un déploiement par phases. Pas tout d'un coup. Vous pourriez faire une timeline avec des jalons clairs ?
+[14:05:30] Ahmed : Carrément, je vous fais une proposition révisée avec un phased delivery. Je peux vous envoyer ça d'ici le 20 juin.
+[14:05:34] Mehdi Trabelsi : Parfait. Et il faudrait aussi qu'on voit la partie data handling. Nos équipes legal et IT sont pointilleuses là-dessus.
+[14:05:38] Ahmed : Oui, c'est normal. On a toute la doc sur la conformité RGPD et la sécurité des données. Je demande à kh de préparer une documentation spécifique pour vos équipes.
+[14:05:42] Mehdi Trabelsi : kh c'est votre CTO c'est ça ?
+[14:05:44] Ahmed : Oui, kh gère toute la partie technique chez Ora Telecom. Il pourra répondre aux questions de votre IT.
+[14:05:48] Mehdi Trabelsi : Super. Et sur l'aspect contractuel, on aimerait avoir une clause de réversibilité. C'est obligatoire pour nous.
+[14:05:52] Ahmed : Aucun souci, on inclut la clause dans la proposition. Vous voulez qu'on cale une réunion avec les équipes techniques ?
+[14:05:56] Mehdi Trabelsi : Oui, excellente idée. La semaine du 23 juin ça vous irait ?
+[14:06:00] Ahmed : On peut faire le 23 juin à 14h. J'invite kh et votre IT.
+[14:06:03] Mehdi Trabelsi : C'est bon pour moi. Je réserve le créneau.
+[14:06:06] Ahmed : Parfait. Donc pour récapituler l'appel : je vous envoie la proposition révisée avec le planning par phases pour le 20 juin, kh prépare la documentation data handling pour le 21 juin, et on se retrouve le 23 juin à 14h pour la réunion technique.
+[14:06:14] Mehdi Trabelsi : Impeccable. Merci Ahmed, c'est un plaisir de travailler avec Ora Telecom.
+[14:06:16] Ahmed : Tout le plaisir est pour nous. Bonne journée Mehdi, à bientôt !
+[14:06:18] Mehdi Trabelsi : À bientôt, au revoir.
+[14:06:20] APPEL TERMINÉ`
+};
+
+function loadSample(type) {
+    document.getElementById('transcript').value = SAMPLES[type];
+    if (type === 'tech') {
+        document.getElementById('leftName').value = 'kh';
+        document.getElementById('leftRole').value = 'Ora Telecom — Dev';
+        document.getElementById('rightName').value = 'Oussema';
+        document.getElementById('rightRole').value = 'Ora Studio — Infra';
+    } else {
+        document.getElementById('leftName').value = 'Ahmed';
+        document.getElementById('leftRole').value = 'Ora Telecom';
+        document.getElementById('rightName').value = 'Mehdi Trabelsi';
+        document.getElementById('rightRole').value = 'Relyance Agency';
+    }
+}
+
+async function checkHealth() {
+    try {
+        const resp = await fetch('/api/health');
+        const data = await resp.json();
+        const el = document.getElementById('apiStatus');
+        if (data.deepseek_configured) {
+            el.innerHTML = '<span class="status-dot status-ok"></span> API ready';
+        } else {
+            el.innerHTML = '<span class="status-dot status-pending"></span> DeepSeek key not set';
+        }
+    } catch (e) {
+        document.getElementById('apiStatus').innerHTML = '<span class="status-dot status-error"></span> API offline';
+    }
+}
+
+function resetUI() {
+    document.getElementById('result').classList.remove('show');
+    document.getElementById('errorBox').style.display = 'none';
+    document.getElementById('loading').classList.remove('show');
+    document.getElementById('stepsContainer').style.display = 'none';
+    ['step1','step2','step3','step4'].forEach(id => {
+        document.getElementById(id).classList.remove('done', 'active');
+    });
+}
+
+async function processTranscript() {
+    resetUI();
+    const steps = document.getElementById('stepsContainer');
+    steps.style.display = 'block';
+
+    const btn = document.getElementById('btnProcess');
+    btn.disabled = true;
+    btn.textContent = 'Processing...';
+
+    const loading = document.getElementById('loading');
+    loading.classList.add('show');
+
+    const transcript = document.getElementById('transcript').value.trim();
+    if (!transcript) {
+        showError('Please paste a transcript.');
+        btn.disabled = false;
+        btn.textContent = '⚡ Process Transcript';
+        loading.classList.remove('show');
+        return;
+    }
+
+    try {
+        // Step 1 — Summarizer
+        setStep('step1', 'active');
+        const resp = await fetch('/api/call/process', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({
+                transcript: transcript,
+                session_id: crypto.randomUUID(),
+                left: {
+                    name: document.getElementById('leftName').value,
+                    phone_number: document.getElementById('leftPhone').value,
+                    role: document.getElementById('leftRole').value,
+                    side: 'left'
+                },
+                right: {
+                    name: document.getElementById('rightName').value,
+                    phone_number: document.getElementById('rightPhone').value,
+                    role: document.getElementById('rightRole').value,
+                    side: 'right'
+                }
+            })
+        });
+
+        if (!resp.ok) {
+            const err = await resp.json();
+            throw new Error(err.detail || resp.statusText);
+        }
+
+        const data = await resp.json();
+        const pv = data.pv;
+        const routing = data.routing;
+
+        // Mark all steps done
+        ['step1','step2','step3','step4'].forEach(id => setStep(id, 'done'));
+
+        // Render PV
+        document.getElementById('pvSubject').textContent = pv.subject || '—';
+        document.getElementById('pvDate').textContent = pv.call_date || '—';
+        document.getElementById('pvId').textContent = pv.pv_id || '—';
+        document.getElementById('pvLeft').textContent = `${pv.left?.name || '?'} — ${pv.left?.role || '?'}`;
+        document.getElementById('pvRight').textContent = `${pv.right?.name || '?'} — ${pv.right?.role || '?'}`;
+        const extras = pv.additional_participants || [];
+        const extrasRow = document.getElementById('pvExtrasRow');
+        if (extras.length) {
+            extrasRow.style.display = 'block';
+            document.getElementById('pvExtras').textContent =
+                extras.map(p => `${p.name || '?'} (${p.side || '?'})`).join(', ');
+        } else {
+            extrasRow.style.display = 'none';
+        }
+        document.getElementById('pvCR').textContent = pv.compte_rendu || '—';
+
+        const badge = document.getElementById('pvBadge');
+        if (pv.call_type === '#appel-tech') {
+            badge.className = 'badge badge-tech';
+            badge.textContent = '#appel-tech';
+        } else {
+            badge.className = 'badge badge-commercial';
+            badge.textContent = '#appel-commercial';
+        }
+
+        // Actions table
+        const tbody = document.getElementById('pvActions');
+        tbody.innerHTML = '';
+        (pv.actions || []).forEach(a => {
+            const diff = a.difficulty || '—';
+            const diffClass = diff === 'facile' ? 'difficulty-facile' :
+                              diff === 'difficile' ? 'difficulty-difficile' :
+                              diff === 'très difficile' ? 'difficulty-très-difficile' : '';
+            const deadline = a.deadline || '—';
+            const model = a.model_hint || '—';
+            tbody.innerHTML += `<tr>
+                <td>${escapeHtml(a.title)}</td>
+                <td>${escapeHtml(a.owner)}</td>
+                <td>${escapeHtml(deadline)}</td>
+                <td class="${diffClass}">${escapeHtml(diff)}</td>
+                <td style="font-size:0.8rem;color:var(--muted)">${escapeHtml(model)}</td>
+            </tr>`;
+        });
+
+        // Meeting
+        const meetingDiv = document.getElementById('pvMeeting');
+        if (pv.meeting_created) {
+            meetingDiv.innerHTML = `<p style="color:var(--success);">📅 Meeting scheduled: <strong>${pv.meeting_datetime || '—'}</strong></p>`;
+        } else {
+            meetingDiv.innerHTML = `<p style="color:var(--muted);">📅 No meeting scheduled</p>`;
+        }
+
+        // Routing
+        const routingDiv = document.getElementById('routingInfo');
+        const dest = routing.destination;
+        const ops = (routing.operations || []).join(', ');
+        if (dest === 'hubspot') {
+            routingDiv.className = 'routing-info routing-hubspot';
+            routingDiv.innerHTML = `📤 Routed to <strong>HubSpot</strong> — ${escapeHtml(ops)}`;
+        } else {
+            routingDiv.className = 'routing-info routing-ora';
+            routingDiv.innerHTML = `📤 Routed to <strong>Ora Studio</strong> — ${escapeHtml(ops)}`;
+        }
+
+        // Raw JSON
+        document.getElementById('rawJson').textContent = JSON.stringify(data, null, 2);
+
+        document.getElementById('result').classList.add('show');
+
+    } catch (e) {
+        showError(e.message);
+    } finally {
+        btn.disabled = false;
+        btn.textContent = '⚡ Process Transcript';
+        loading.classList.remove('show');
+    }
+}
+
+function setStep(id, state) {
+    const el = document.getElementById(id);
+    el.classList.remove('done', 'active');
+    if (state) el.classList.add(state);
+}
+
+function showError(msg) {
+    const el = document.getElementById('errorBox');
+    el.textContent = '❌ ' + msg;
+    el.style.display = 'block';
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+}
+
+checkHealth();
+</script>
+</body>
+</html>

@@ -1,0 +1,112 @@
+# CRM Vocal — development stack (dev + hot reload).
+#
+# Services:
+#   backend   — FastAPI (uvicorn --reload) on :8000
+#   frontend  — Next.js dashboard (next dev) on :3000
+#   tools     — idle shell for scripts (audio gen, e2e/live replay) + pytest
+#   postgres  — PostgreSQL 16
+#   redis     — Redis 7
+#
+# Secrets are injected from .env (git-ignored); Docker-internal hostnames and the
+# fallback-store path are overridden below via `environment:`.
+
+services:
+  backend:
+    build: .
+    image: crm-vocal-dev
+    command: uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+    environment:
+      # Docker-internal hostnames override the localhost defaults in .env
+      DATABASE_URL: postgresql+asyncpg://crm_vocal:crm_vocal@postgres:5432/crm_vocal
+      REDIS_URL: redis://redis:6379/0
+      FALLBACK_STORE_PATH: /data/fallback_pvs.json
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      # Mount only what the API needs so `--reload` doesn't watch the whole repo
+      - ./app:/app/app
+      - ./ui:/app/ui
+      - fallback_data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  frontend:
+    build: ./ui-next
+    image: crm-vocal-frontend-dev
+    command: npm run dev
+    ports:
+      - "3000:3000"
+    environment:
+      BACKEND_URL: http://backend:8000
+    volumes:
+      - ./ui-next:/app
+      # Keep the container's own node_modules/.next — the host's Windows dirs
+      # must not shadow the Linux-installed dependencies.
+      - /app/node_modules
+      - /app/.next
+    depends_on:
+      - backend
+
+  tools:
+    image: crm-vocal-dev
+    command: tail -f /dev/null
+    environment:
+      DATABASE_URL: postgresql+asyncpg://crm_vocal:crm_vocal@postgres:5432/crm_vocal
+      REDIS_URL: redis://redis:6379/0
+      FALLBACK_STORE_PATH: /data/fallback_pvs.json
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      # Whole repo: scripts, tests, fixtures, transcripts, and the audio samples.
+      - .:/app
+      - fallback_data:/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: crm_vocal
+      POSTGRES_PASSWORD: crm_vocal
+      POSTGRES_DB: crm_vocal
+    ports:
+      - "5432:5432"
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crm_vocal"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+volumes:
+  pg_data:
+  redis_data:
+  fallback_data:

@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRM Vocal — Call Lobby</title>
+    <style>
+        :root {
+            --bg: #0f0f14; --surface: #1a1a24; --border: #2a2a3a; --border-light: #333348;
+            --text: #e0e0e8; --muted: #7a7a8a; --dim: #5a5a6a;
+            --accent: #6c5ce7; --accent-bright: #a78bfa; --success: #00d68f;
+            --warning: #ffaa00; --danger: #ff4757; --tech: #00d2ff; --commercial: #ff6b6b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: var(--bg); color: var(--text); min-height: 100vh;
+            display: flex; align-items: center; justify-content: center; padding: 2rem 1.5rem;
+            background-image:
+                radial-gradient(ellipse 70% 45% at 50% -15%, rgba(108,92,231,0.16), transparent),
+                radial-gradient(ellipse 55% 40% at 90% 0%, rgba(0,210,255,0.08), transparent);
+        }
+        .wrap { width: 100%; max-width: 760px; }
+        header { text-align: center; margin-bottom: 1.8rem; }
+        header h1 { font-size: 1.9rem; font-weight: 800; letter-spacing: -0.02em; }
+        header h1 span { background: linear-gradient(90deg, var(--accent-bright), var(--tech)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+        header p { color: var(--muted); margin-top: 0.4rem; font-size: 0.95rem; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.25rem; }
+        @media (max-width: 680px) { .grid { grid-template-columns: 1fr; } }
+
+        .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; }
+        .card h3 { font-size: 0.95rem; margin-bottom: 0.3rem; }
+        .card .sub { color: var(--muted); font-size: 0.82rem; margin-bottom: 1rem; }
+        label { display: block; font-size: 0.78rem; color: var(--muted); margin: 0.75rem 0 0.3rem; }
+        input, select {
+            width: 100%; padding: 0.6rem 0.75rem; background: var(--bg); border: 1px solid var(--border);
+            border-radius: 8px; color: var(--text); font-size: 0.92rem; font-family: inherit; outline: none;
+        }
+        input:focus, select:focus { border-color: var(--accent); }
+        .btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+            width: 100%; padding: 0.7rem 1rem; border: none; border-radius: 8px; font-size: 0.92rem;
+            font-weight: 600; cursor: pointer; transition: all 0.15s; font-family: inherit; margin-top: 1rem;
+        }
+        .btn-primary { background: var(--accent); color: #fff; }
+        .btn-primary:hover { background: var(--accent-bright); }
+        .btn-secondary { background: transparent; color: var(--text); border: 1px solid var(--border); }
+        .btn-secondary:hover { border-color: var(--accent); background: rgba(108,92,231,0.08); }
+    </style>
+</head>
+<body>
+<div class="wrap">
+    <header>
+        <h1>CRM Vocal — <span>Call Lobby</span></h1>
+        <p>Create a new call session, or join an existing one.</p>
+    </header>
+
+    <div class="grid">
+        <div class="card">
+            <h3>🎙 Create a call</h3>
+            <p class="sub">You're the host. Start a new session and invite others.</p>
+            <label for="hostName">Your name</label>
+            <input id="hostName" placeholder="e.g. kh">
+            <label for="hostSide">Your side</label>
+            <select id="hostSide">
+                <option value="left" selected>Left — Ora Telecom</option>
+                <option value="right">Right — External</option>
+            </select>
+            <label for="hostPhone">Phone number (optional)</label>
+            <input id="hostPhone" placeholder="+216 …" autocomplete="tel">
+            <label for="hostRole">Occupation / job title (optional)</label>
+            <input id="hostRole" placeholder="e.g. CTO" autocomplete="organization-title">
+            <button class="btn btn-primary" id="createBtn">Create call</button>
+        </div>
+
+        <div class="card">
+            <h3>🔗 Join a call</h3>
+            <p class="sub">Enter the session id from your invite link.</p>
+            <label for="joinSession">Session ID</label>
+            <input id="joinSession" placeholder="Paste the session id…">
+            <label for="joinName">Your name</label>
+            <input id="joinName" placeholder="e.g. Sami">
+            <label for="joinSide">Your side</label>
+            <select id="joinSide">
+                <option value="right" selected>Right — External</option>
+                <option value="left">Left — Ora Telecom</option>
+            </select>
+            <label for="joinPhone">Phone number (optional)</label>
+            <input id="joinPhone" placeholder="+216 …" autocomplete="tel">
+            <label for="joinRole">Occupation / job title (optional)</label>
+            <input id="joinRole" placeholder="e.g. CEO" autocomplete="organization-title">
+            <button class="btn btn-secondary" id="joinBtn">Join call</button>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  function go(session, speaker, side, phone, role) {
+    var q = 'session=' + encodeURIComponent(session) +
+            '&speaker=' + encodeURIComponent(speaker) +
+            '&side=' + side;
+    if (phone) { q += '&phone=' + encodeURIComponent(phone); }
+    if (role) { q += '&role=' + encodeURIComponent(role); }
+    location.href = '/ui/call.html?' + q;
+  }
+
+  // Pre-fill the join form when opened from an invite link (?session=…).
+  var params = new URLSearchParams(location.search);
+  if (params.get('session')) { $('joinSession').value = params.get('session'); }
+
+  $('createBtn').addEventListener('click', async function () {
+    var name = $('hostName').value.trim() || 'Agent';
+    var side = $('hostSide').value;
+
+    var session = null;
+    try {
+      var r = await fetch('/api/call/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({}),
+      });
+      if (r.ok) { session = (await r.json()).session_id; }
+    } catch (e) { /* fall back to client-side id */ }
+    if (!session) { session = (window.crypto && crypto.randomUUID) ? crypto.randomUUID() : ('session-' + Date.now()); }
+
+    go(session, name, side, $('hostPhone').value.trim(), $('hostRole').value.trim());
+  });
+
+  $('joinBtn').addEventListener('click', function () {
+    var session = $('joinSession').value.trim();
+    var name = $('joinName').value.trim();
+    var side = $('joinSide').value;
+    if (!session) { alert('Please enter the session id.'); return; }
+    if (!name) { alert('Please enter your name.'); return; }
+    go(session, name, side, $('joinPhone').value.trim(), $('joinRole').value.trim());
+  });
+})();
+</script>
+</body>
+</html>

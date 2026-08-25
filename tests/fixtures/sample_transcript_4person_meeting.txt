@@ -1,0 +1,25 @@
+[09:00:00] APPEL DÉMARRÉ
+[09:00:03] kh : Bonjour à tous, merci d'être là pour ce point technique sur l'intégration CRM Vocal chez Relyance. On est quatre aujourd'hui, parfait pour cadrer la mise en production.
+[09:00:12] Lina : Bonjour kh, bonjour Sami. Merci d'avoir organisé. De notre côté on a Oussema qui s'occupera de l'infrastructure et moi du cadrage produit.
+[09:00:21] Oussema : Salam tout le monde. Je confirme, je m'occupe des environnements et du déploiement. J'ai déjà regardé la doc API que vous avez envoyée.
+[09:00:30] Sami : Super. Alors pour résumer le périmètre : il nous faut monter un environnement de staging chez vous, brancher le webhook de transcription, puis migrer les données historiques des contrats.
+[09:00:44] kh : Exactement. Sami s'occupe du backend et de l'API, moi je valide l'architecture. Lina, vous pouvez nous confirmer la date cible de mise en production ?
+[09:00:55] Lina : On vise la fin du mois prochain, le 30 septembre. C'est un peu serré mais on pense que c'est faisable si l'environnement de staging est prêt d'ici vendredi.
+[09:01:08] Oussema : Pour le staging, je peux le créer sur notre cluster dès que vous me donnez les specs techniques. Il me faut les variables d'environnement et les accès GitLab.
+[09:01:20] Sami : Je t'envoie les specs aujourd'hui, avec le payload JSON d'exemple pour le webhook. Tu devrais avoir tout ce qu'il faut pour vendredi.
+[09:01:32] kh : Parfait. Point important : la sécurité. Oussema, il faut qu'on valide ensemble l'authentification des webhooks, signature HMAC ou token bearer, pour que les données clients ne fuient pas.
+[09:01:47] Oussema : Oui, c'est critique. Je propose qu'on fasse une revue de sécurité dédiée la semaine prochaine, avec vos équipes et les nôtres.
+[09:01:58] Lina : Excellente idée. Je bloque un créneau mercredi 26 à 10h pour la revue de sécurité. Ça vous va ?
+[09:02:08] kh : Ça me va, mercredi 26 à 10h c'est noté. Sami, tu peux préparer la matrice des risques d'ici là ?
+[09:02:19] Sami : Oui, je prépare la matrice des risques et la liste des endpoints exposés. Je te livre ça lundi pour qu'on ait le temps de relire avant mercredi.
+[09:02:31] Lina : De notre côté, Oussema va rédiger le runbook de déploiement et moi je finalise le cahier des charges de la migration des données.
+[09:02:42] Oussema : Pour la migration, il nous faut un export propre des contrats. Vous pouvez nous fournir le format du fichier attendu ? CSV ou JSON ça nous irait très bien.
+[09:02:53] Sami : JSON, avec un schéma clair. Je te l'envoie avec les specs. Il faudra aussi une phase de test sur un échantillon avant de tout basculer.
+[09:03:05] kh : Tout à fait, pas de bascule en aveugle. On fait un test sur dix pour cent des contrats, puis on valide, puis on migre le reste.
+[09:03:17] Oussema : Compris. Je m'engage à livrer l'environnement de staging pour vendredi et le runbook pour lundi.
+[09:03:27] Lina : Et moi je vous envoie le cahier des charges migré avec les règles de contrôle qualité pour mercredi.
+[09:03:36] kh : Récapitulons. Sami envoie les specs et le schéma JSON aujourd'hui, et la matrice des risques pour lundi. Oussema livre le staging vendredi et le runbook lundi. Lina finalise le cahier des charges pour mercredi. Et on se retrouve mercredi 26 à 10h pour la revue de sécurité.
+[09:03:52] Sami : C'est clair pour moi. Merci à tous, à mercredi !
+[09:03:57] Lina : Parfait, merci kh et Sami. À mercredi.
+[09:04:00] Oussema : À mercredi, salam tout le monde.
+[09:04:03] APPEL TERMINÉ

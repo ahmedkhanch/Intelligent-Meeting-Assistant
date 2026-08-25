@@ -1,0 +1,28 @@
+[09:15:00] APPEL DÉMARRÉ
+[09:15:03] Ahmed : Bonjour Karim, merci d'avoir accepté cette réunion. Comment ça se passe chez Digitalis depuis notre dernier échange ?
+[09:15:07] Karim Mansouri : Bonjour Ahmed, ça va bien. On a pas mal avancé sur notre côté, et votre solution nous intéresse de plus en plus. J'ai quelques questions précises aujourd'hui.
+[09:15:13] Ahmed : Je vous écoute, allez-y.
+[09:15:15] Karim Mansouri : Déjà, sur l'intégration — votre API CRM, elle se connecte facilement à notre stack existant ? On tourne sous Salesforce en ce moment, et on voudrait pas tout casser.
+[09:15:22] Ahmed : Excellente question. Notre API expose un endpoint REST standard, avec authentification par JWT. On a déjà fait plusieurs migrations Salesforce dans le passé, donc on a des connecteurs prêts. L'intégration prend typiquement deux à trois semaines.
+[09:15:30] Karim Mansouri : Deux à trois semaines, c'est raisonnable. Et pour la migration des données, vous gérez ça comment ? On a à peu près cinquante mille contacts et trois ans d'historique commercial.
+[09:15:36] Ahmed : On a un module ETL dédié qui s'occupe du mapping et de la validation. Pour cinquante mille contacts, on peut faire une migration par lots le temps d'un week-end, sans interruption de service.
+[09:15:42] Karim Mansouri : Ok, intéressant. Maintenant, côté contractuel — vous proposez quoi comme modèle ? Abonnement annuel ou mensuel ?
+[09:15:48] Ahmed : On propose les deux, mais je vous conseille l'annuel. Vous économisez vingt pourcent par rapport au mensuel, et ça inclut le support prioritaire et les mises à jour. Pour une boîte de votre taille, on est sur le plan Business à trente-quatre mille euros par an.
+[09:15:56] Karim Mansouri : Trente-quatre mille... c'est dans notre budget. Le support prioritaire, il fonctionne comment exactement ? SLA ?
+[09:16:02] Ahmed : SLA de quatre heures en critique, vingt-quatre heures en standard. Et vous avez un CSM dédié — ce sera probablement Inès, qui est excellente.
+[09:16:08] Karim Mansouri : Parfait. Autre point important — la sécurité des données. Nos clients sont dans la finance, donc on a des exigences strictes. Vous êtes certifié ISO 27001 ?
+[09:16:15] Ahmed : Oui, on est certifié ISO 27001 et SOC 2 Type II. Toutes les données sont chiffrées en transit et au repos, avec du AES-256. On peut aussi faire un déploiement sur un tenant dédié si vous préférez, plutôt que du multi-tenant.
+[09:16:23] Karim Mansouri : Le tenant dédié, ça change le pricing ?
+[09:16:26] Ahmed : Oui, il faut compter un supplément de vingt pourcent. Mais honnêtement, pour vos besoins, le multi-tenant avec chiffrement est largement suffisant. C'est ce qu'on fait pour la plupart de nos clients finance.
+[09:16:32] Karim Mansouri : D'accord, je prends note. Et au niveau du déploiement, vous pouvez nous faire une timeline ? On aimerait idéalement que tout soit opérationnel pour début septembre.
+[09:16:38] Ahmed : C'est jouable. Je vous propose : signature du contrat avant fin juillet, kick-off technique première semaine d'août, migration et intégration courant août, et recette en dernière semaine. Mise en production le premier septembre.
+[09:16:46] Karim Mansouri : Ça me paraît cohérent. Il faudra prévoir une formation pour nos équipes commerciales — ils sont une trentaine.
+[09:16:50] Ahmed : On inclut deux sessions de formation dans le plan Business, une pour les utilisateurs et une pour les admins. Si vous voulez des sessions supplémentaires, c'est en option à mille cinq cents euros la session.
+[09:16:56] Karim Mansouri : Deux sessions ça devrait suffire. Dernière question — si jamais on veut résilier, la clause de sortie elle dit quoi ?
+[09:17:02] Ahmed : Préavis de trente jours, et on vous restitue toutes vos données au format CSV et JSON dans les quinze jours suivant la résiliation. Export complet, pas de vendor lock-in. C'est dans l'article huit du contrat.
+[09:17:08] Karim Mansouri : C'est carré. Bon, je pense qu'on a fait le tour. Vous pouvez m'envoyer une proposition formelle avec tout ce qu'on a dit ?
+[09:17:13] Ahmed : Bien sûr. Je vous envoie une propale complète d'ici la fin de semaine : plan Business, timeline août-septembre, détails de la migration, et le contrat avec la clause de sortie. On se cale un point la semaine prochaine pour les éventuelles questions ?
+[09:17:20] Karim Mansouri : Parfait. Merci Ahmed, c'était très clair. À la semaine prochaine.
+[09:17:23] Ahmed : Merci à vous Karim. Bonne journée, au revoir.
+[09:17:25] Karim Mansouri : Au revoir.
+[09:17:28] APPEL TERMINÉ

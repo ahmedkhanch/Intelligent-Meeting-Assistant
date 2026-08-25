@@ -1,0 +1,33 @@
+# Git / local state
+.git/
+.gitignore
+.claude/
+.pytest_cache/
+.venv/
+
+# Secrets — never in the image
+.env
+.env.*
+
+# Python cache / artifacts
+**/__pycache__/
+*.pyc
+*.egg-info/
+dist/
+build/
+
+# Node (built from ui-next/Dockerfile; source is bind-mounted at runtime)
+ui-next/node_modules/
+ui-next/.next/
+ui-next/tsconfig.tsbuildinfo
+
+# Large test audio — kept out of the image; the tools container gets them
+# via the repo bind-mount, so nothing is lost.
+*.mp3
+*.wav
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
